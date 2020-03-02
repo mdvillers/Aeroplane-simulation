@@ -156,6 +156,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="sources.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assimp-vc142-mtd.dll" />
