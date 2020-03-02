@@ -19,8 +19,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1200;
+const unsigned int SCR_HEIGHT = 900;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -31,6 +31,12 @@ bool firstMouse = true;
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+//plane position
+float planeX = 0.0f;
+float planeY = -0.5f;
+float planeZ = -0.3f;
+float rotateX = 0.0f;
 
 int main()
 {
@@ -72,15 +78,16 @@ int main()
 
     // configure global opengl state
     // -----------------------------
-    glEnable(GL_DEPTH_TEST);
+   glEnable(GL_DEPTH_TEST);
 
     // build and compile shaders
     // -------------------------
     Shader ourShader("modelLoadingVS.txt", "modelLoadingFS.txt");
 
     //Load Models
-    Model ourModel("../resources/nanosuit/nanosuit.obj");
-    // draw in wireframe
+    Model planeModel("../resources/Plane/11803_Airplane_v1_l1.obj");
+    Model trackModel("../resources/track/track.obj");
+     //draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // render loop
@@ -99,7 +106,7 @@ int main()
 
         // render
         // ------
-        glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+        glClearColor(0.529f, 0.8f, 0.92f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // don't forget to enable shader before setting uniforms
@@ -111,12 +118,25 @@ int main()
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
 
-        // render the loaded model
+        // render the plane model
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+        model = glm::translate(model, glm::vec3(planeX,planeY, planeZ)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(0.001f, 0.001f, 0.001f));	// it's a bit too big for our scene, so scale it down
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
+        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+        model = glm::rotate(model, glm::radians(-20.0f), glm::vec3(0.0, 1.0, 0.0));
+
+        model = glm::rotate(model, glm::radians(rotateX), glm::vec3(1.0, 0.0, 1.0));
         ourShader.setMat4("model", model);
-        ourModel.Draw(ourShader);
+        planeModel.Draw(ourShader);
+
+        // render the track model
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f,-2.0f, -5.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(0.06f, 0.06f, 0.06f));	// it's a bit too big for our scene, so scale it down
+        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.1, 1.0, 0.1));
+        ourShader.setMat4("model", model);
+        trackModel.Draw(ourShader);
 
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -146,6 +166,24 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+
+        camera.ProcessKeyboard(FORWARD, 0.5*deltaTime);
+        planeZ -= 0.005;
+        planeY += 0.0005;
+    }
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+        planeZ += 0.005;
+        planeY -= 0.0005;
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        rotateX += 0.05;
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+
+        rotateX -= 0.05;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
