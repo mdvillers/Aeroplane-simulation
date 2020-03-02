@@ -8,8 +8,8 @@ void processInput(GLFWwindow* window);
 
 unsigned int loadCubemap(vector<std::string> faces);
 // settings
-const unsigned int SCR_WIDTH = 1200;
-const unsigned int SCR_HEIGHT = 900;
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -46,7 +46,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", glfwGetPrimaryMonitor(), NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -214,7 +214,7 @@ void processInput(GLFWwindow* window)
     {
 
         SoundEngine->play2D("../resources/audio/sound1.wav", GL_FALSE);
-        camera.ProcessKeyboard(FORWARD, 0.3*deltaTime);
+        camera.ProcessKeyboard(FORWARD, 0.5*deltaTime);
         planeZ -= 0.008;
         planeY += 0.00128;
     }
@@ -226,7 +226,7 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
         SoundEngine->play2D("../resources/audio/sound1.wav", GL_FALSE);
-        camera.ProcessKeyboard(BACKWARD, 0.3*deltaTime);
+        camera.ProcessKeyboard(BACKWARD, 0.5*deltaTime);
         planeZ += 0.008;
         planeY -= 0.00128;
     }
