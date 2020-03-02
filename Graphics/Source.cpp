@@ -10,6 +10,9 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Model.h"
+#include<irrklang/irrKlang.h>
+using namespace irrklang;
+
 
 #include <iostream>
 
@@ -37,6 +40,10 @@ float planeX = 0.0f;
 float planeY = -0.5f;
 float planeZ = -0.3f;
 float rotateX = 0.0f;
+
+//sound engine
+
+ISoundEngine* SoundEngine = createIrrKlangDevice();
 
 int main()
 {
@@ -169,6 +176,7 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     {
 
+        SoundEngine->play2D("../resources/audio/sound1.wav", GL_FALSE);
         camera.ProcessKeyboard(FORWARD, 0.5*deltaTime);
         planeZ -= 0.005;
         planeY += 0.0005;
