@@ -223,6 +223,16 @@ void processInput(GLFWwindow* window)
         SoundEngine->play2D("../resources/audio/sound1.wav", GL_FALSE);
         planeY -= 0.0005;
     }
+    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS && planeY <= 4.0f)
+    {
+        SoundEngine->play2D("../resources/audio/sound1.wav", GL_FALSE);
+        planeY += 0.0005;
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && planeY <= 4.0f)
+    {
+        SoundEngine->play2D("../resources/audio/sound1.wav", GL_FALSE);
+        planeY -= 0.0005;
+    }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
         SoundEngine->play2D("../resources/audio/sound1.wav", GL_FALSE);
