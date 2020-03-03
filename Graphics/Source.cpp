@@ -46,7 +46,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", glfwGetPrimaryMonitor(), NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Aeroplane Simulation", glfwGetPrimaryMonitor(), NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -107,7 +107,7 @@ int main()
     Model planeModel("../resources/Plane/11803_Airplane_v1_l1.obj");
     Model trackModel("../resources/track/track.obj");
      //draw in wireframe
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+   // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     // render loop
     // -----------
@@ -141,30 +141,32 @@ int main()
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(planeX,planeY, planeZ)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(0.001f, 0.001f, 0.001f));	// it's a bit too big for our scene, so scale it down
+
+        //multiple rotations performed to fix plane in right position
         model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
         model = glm::rotate(model, glm::radians(-20.0f), glm::vec3(0.0, 1.0, 0.0));
 
-        model = glm::rotate(model, glm::radians(rotateX), glm::vec3(1.0, 0.0, 1.0));
+        model = glm::rotate(model, glm::radians(rotateX), glm::vec3(1.0, 0.0, 1.0)); //Rotation effect using LEFT and RIGHT keys
         ourShader.setMat4("model", model);
         planeModel.Draw(ourShader);
 
-        // render the track model1
+        // render the track 1 model
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f,-2.0f, -5.0f)); // translate it down so it's at the center of the scene
+        model = glm::translate(model, glm::vec3(0.0f,-2.0f, -5.0f)); // translate it down the plane postion
         model = glm::scale(model, glm::vec3(0.06f, 0.06f, 0.06f));	// it's a bit too big for our scene, so scale it down
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.1, 1.0, 0.1));
         ourShader.setMat4("model", model);
         trackModel.Draw(ourShader);
 
-        //render the track model2
+        //render the track 2 model
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -20.0f)); // translate it down so it's at the center of the scene
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -20.0f)); // translate it down to far from first track
         model = glm::scale(model, glm::vec3(0.06f, 0.06f, 0.06f));	// it's a bit too big for our scene, so scale it down
         model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.1, 1.0, 0.1));
         ourShader.setMat4("model", model);
         trackModel.Draw(ourShader);
-
+      
         // draw skybox as last
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
         skyBoxShader.use();
@@ -178,7 +180,7 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
         glDepthFunc(GL_LESS); // set depth function back to default
-
+    
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -213,12 +215,24 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS && planeZ>=-19.0f)
     {
 
-        SoundEngine->play2D("../resources/audio/sound1.wav", GL_FALSE);
+        SoundEngine->play2D("../resources/audio/sound1.wav", GL_FALSE); 
         camera.ProcessKeyboard(FORWARD, 0.5*deltaTime);
-        planeZ -= 0.008;
+        planeZ -= 0.008; 
         planeY += 0.00128;
     }
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && planeY >=1.5f) 
+    
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        SoundEngine->play2D("../resources/audio/sound1.wav", GL_FALSE);
+        camera.ProcessKeyboard(BACKWARD, 0.5*deltaTime);
+        planeZ += 0.008;
+        planeY -= 0.00128;
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        rotateX += 0.05;
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        rotateX -= 0.05;
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && planeY >= 1.5f)
     {
         SoundEngine->play2D("../resources/audio/sound1.wav", GL_FALSE);
         planeY -= 0.0005;
@@ -233,17 +247,6 @@ void processInput(GLFWwindow* window)
         SoundEngine->play2D("../resources/audio/sound1.wav", GL_FALSE);
         planeY -= 0.0005;
     }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-        SoundEngine->play2D("../resources/audio/sound1.wav", GL_FALSE);
-        camera.ProcessKeyboard(BACKWARD, 0.5*deltaTime);
-        planeZ += 0.008;
-        planeY -= 0.00128;
-    }
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        rotateX += 0.05;
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        rotateX -= 0.05;
 }
 
 // ---------------------------------------------------------------------------------------------
